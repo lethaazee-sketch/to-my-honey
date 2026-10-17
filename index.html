@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#10172b">
+  <title>For You, Pian 🤍</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #10172b;
+      --panel: rgba(20, 30, 55, .86);
+      --line: rgba(214, 226, 255, .23);
+      --pink: #ff6b8a;
+      --blue: #b9d9ff;
+      --cream: #fff9e9;
+    }
+    * { box-sizing: border-box; }
+    html { min-height: 100%; }
+    body {
+      margin: 0; min-height: 100vh; color: #fff;
+      font-family: 'Poppins', sans-serif;
+      background:
+        linear-gradient(140deg, rgba(9, 15, 35, .82), rgba(22, 33, 62, .76)),
+        url('bg.jpg') center / cover fixed;
+      background-color: var(--navy);
+    }
+    button { font: inherit; -webkit-tap-highlight-color: transparent; }
+    button:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
+    .screen {
+      width: 100%; min-height: 100svh; padding: 24px 18px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .container { width: min(100%, 440px); margin: auto; text-align: center; }
+    .hidden { display: none !important; }
+    .eyebrow { color: #d9e5ff; letter-spacing: .12em; text-transform: uppercase; font-size: .72rem; }
+    .script { font-family: 'Dancing Script', cursive; }
+    h1, h2, p { overflow-wrap: anywhere; }
+    .pin-title { font-size: 1rem; margin: 8px 0 20px; color: #edf2ff; }
+    .pin-dots { display: flex; justify-content: center; gap: 14px; margin: 0 0 26px; }
+    .pin-dot {
+      width: 22px; height: 22px; border: 1.5px solid #9aa9c9; border-radius: 50%;
+      display: grid; place-items: center; font-size: 12px;
+      background: rgba(255,255,255,.06);
+    }
+    .pin-dot.filled { border-color: var(--pink); }
+    .pin-dot.filled::after { content: '♥'; color: var(--pink); }
+    .keypad { display: grid; grid-template-columns: repeat(3, 68px); justify-content: center; gap: 12px; }
+    .key-btn {
+      width: 68px; height: 62px; border: 1px solid var(--line); border-radius: 20px;
+      color: white; background: rgba(255,255,255,.09); cursor: pointer;
+      backdrop-filter: blur(8px); transition: transform .15s, background .2s;
+    }
+    .key-btn:active { transform: scale(.94); background: rgba(255,255,255,.2); }
+    .key-btn.utility { font-size: .8rem; color: #ffd8e1; }
+    .hint { min-height: 22px; margin-top: 18px; color: #d7e0f4; font-size: .82rem; }
+    .glass {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 24px;
+      padding: 28px 22px; box-shadow: 0 18px 55px rgba(0,0,0,.3);
+      backdrop-filter: blur(12px);
+    }
+    .emoji-big { font-size: 3.4rem; margin-bottom: 10px; }
+    .main-title { font-size: clamp(2.1rem, 9vw, 3rem); line-height: 1.08; margin: 8px 0 12px; }
+    .subtext { color: #dbe4f7; line-height: 1.7; font-size: .9rem; }
+    .btn {
+      border: 0; border-radius: 999px; padding: 12px 20px; cursor: pointer;
+      color: #fff; font-weight: 600; background: linear-gradient(135deg, #ff7893, #e84d76);
+      box-shadow: 0 8px 22px rgba(232,77,118,.22); transition: transform .18s, filter .18s;
+    }
+    .btn:hover { filter: brightness(1.07); }
+    .btn:active { transform: scale(.97); }
+    .btn.secondary { background: rgba(255,255,255,.1); border: 1px solid var(--line); box-shadow: none; }
+    .btn.full { width: 100%; margin-top: 12px; }
+    .envelope { cursor: pointer; user-select: none; }
+    .letter {
+      background: var(--cream); color: #222b43; text-align: left; border-radius: 16px;
+      padding: 22px 20px; max-height: 62svh; overflow-y: auto; line-height: 1.8; font-size: .88rem;
+      white-space: normal;
+    }
+    .letter h2 { text-align: center; margin: 0 0 16px; font-size: 2rem; color: #17213d; }
+    .letter p { margin: 0 0 14px; }
+    .menu-title { font-size: clamp(2.5rem, 10vw, 3.4rem); margin: 8px 0 0; }
+    .menu-subtitle { color: #dbe4f7; font-size: .85rem; margin: 8px 0 26px; }
+    .cards-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .card {
+      min-width: 0; padding: 19px 8px; color: white; cursor: pointer;
+      background: rgba(255,255,255,.08); border: 1px solid var(--line); border-radius: 18px;
+      transition: transform .2s, border-color .2s; backdrop-filter: blur(8px);
+    }
+    .card:hover { transform: translateY(-4px); border-color: var(--pink); }
+    .card-icon { display: block; font-size: 2rem; margin-bottom: 9px; }
+    .card span:last-child { font-size: .78rem; font-weight: 600; }
+    .modal {
+      position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
+      padding: 20px; background: rgba(6, 10, 24, .97);
+      animation: fadeIn .22s ease both;
+    }
+    .modal-content { width: min(100%, 600px); max-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+    .close-btn {
+      position: absolute; top: max(0px, env(safe-area-inset-top)); right: 0; z-index: 3;
+      width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 50%;
+      color: white; background: rgba(255,255,255,.12); cursor: pointer; font-size: 1.4rem;
+    }
+    .modal-heading { margin: 5px 50px 16px; font-size: clamp(1.8rem, 7vw, 2.5rem); text-align: center; }
+    .gallery {
+      width: 100%; height: min(67svh, 720px); min-height: 200px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 16px; overflow: hidden; background: #080b15;
+      border: 1px solid rgba(255,255,255,.12); box-shadow: 0 12px 35px rgba(0,0,0,.35);
+    }
+    .gallery img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .gallery-caption { width: 100%; min-height: 48px; text-align: center; color: #e1e9fb; line-height: 1.55; margin: 14px 0 8px; font-size: .9rem; }
+    .photo-count { font-size: .75rem; color: #aebfe0; margin-bottom: 12px; }
+    .nav-controls { width: 100%; display: flex; gap: 12px; }
+    .nav-controls .btn { flex: 1; }
+    .flower-panel, .playlist-panel { width: 100%; text-align: center; }
+    .flower-art { width: min(100%, 360px); margin: 16px auto; border-radius: 18px; overflow: hidden; box-shadow: 0 12px 35px rgba(0,0,0,.28); }
+    .flower-art img { display: block; width: 100%; max-height: 58svh; object-fit: contain; border-radius: 18px; }
+    .playlist-item { display: flex; align-items: center; gap: 13px; text-align: left; padding: 14px; margin: 18px auto 0; width: 100%; max-width: 360px; border: 1px solid var(--line); border-radius: 15px; background: rgba(255,255,255,.07); }
+    .music-disc { font-size: 2rem; }
+    .playlist-copy { flex: 1; min-width: 0; }
+    .playlist-copy strong { display: block; font-size: .9rem; }
+    .playlist-copy small { color: #c8d5ed; font-size: .76rem; }
+    .footer-note { color: #aebfe0; font-size: .73rem; margin-top: 22px; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @media (max-width: 360px) {
+      .screen { padding: 18px 12px; }
+      .glass { padding: 24px 16px; }
+      .keypad { grid-template-columns: repeat(3, 60px); gap: 10px; }
+      .key-btn { width: 60px; height: 58px; }
+      .cards-grid { gap: 7px; }
+      .card { padding: 16px 5px; }
+    }
+    @media (max-height: 650px) {
+      .screen { align-items: flex-start; }
+      #pin-screen.screen, #menu-screen.screen { align-items: center; }
+      .gallery { height: 53svh; }
+      .modal { padding: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <audio id="bg-music" loop preload="metadata">
+    <source src="musik.mp3" type="audio/mpeg">
+    Browser kamu tidak mendukung audio.
+  </audio>
+
+  <main>
+    <section id="pin-screen" class="screen">
+      <div class="container">
+        <div class="glass">
+          <div class="eyebrow">a little surprise for you</div>
+          <div class="emoji-big">🔐</div>
+          <h1 class="script main-title">For You, Pian</h1>
+          <p class="pin-title">Masukkan tanggal dan bulan ulang tahun kamu 🤍</p>
+          <div class="pin-dots" aria-label="PIN 4 digit">
+            <span class="pin-dot"></span><span class="pin-dot"></span>
+            <span class="pin-dot"></span><span class="pin-dot"></span>
+          </div>
+          <div class="keypad" aria-label="Keypad PIN">
+            <button class="key-btn" data-key="1">1</button>
+            <button class="key-btn" data-key="2">2</button>
+            <button class="key-btn" data-key="3">3</button>
+            <button class="key-btn" data-key="4">4</button>
+            <button class="key-btn" data-key="5">5</button>
+            <button class="key-btn" data-key="6">6</button>
+            <button class="key-btn" data-key="7">7</button>
+            <button class="key-btn" data-key="8">8</button>
+            <button class="key-btn" data-key="9">9</button>
+            <button class="key-btn utility" data-action="clear">Hapus</button>
+            <button class="key-btn" data-key="0">0</button>
+            <button class="key-btn utility" data-action="backspace">⌫</button>
+          </div>
+          <p id="pin-message" class="hint" role="status" aria-live="polite">Clue: tanggal & bulan ulang tahun kamu 🐱</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="envelope-screen" class="screen hidden">
+      <div class="container">
+        <div id="envelope-closed" class="glass envelope" role="button" tabindex="0" aria-label="Buka surat">
+          <div class="emoji-big">✉️</div>
+          <h1 class="script main-title">Ada pesan khusus untukmu</h1>
+          <p class="subtext">Klik untuk membuka, om Pian 🤍</p>
+          <button class="btn full" type="button">Buka surat 💌</button>
+        </div>
+        <div id="letter-open" class="hidden">
+          <article class="letter">
+            <h2 class="script">For You, Pian</h2>
+            <p>Hai om Pian jelek, di sini aku bikin kayak gini karena aku mau kamu tahu kalau aku sayang kamu. Aku cintaa banget sama kamu.</p>
+            <p>Pian, kalau lagi capek atau sedih, inget yaa kalau kamu harus berjuang demi kamu di masa depan, bukan demi siapa pun. Kalau kamu capek, kamu bisa cerita ke aku, anything babe. Setiap kali kamu cerita selalu aku bintangin, karena aku ngerasa kamu jadiin aku tempat pulang, tempat istirahat kamu kalau lagi capek, sayang.</p>
+            <p>Bahkan berjuta kata pun nggak akan bisa aku ungkapin buat definisiin rasa sayang aku, rasa cinta aku, bahkan rasa bangga aku karena punya kamu yang bisa nemenin hari panjangku. Sayangku, terima kasih sudah hadir di hidup aku. Gara-gara kamu, aku ngerasa dicintain. Gara-gara kamu, aku nggak perlu jadi orang yang sempurna.</p>
+            <p>Semisal kita nggak sama-sama lagi, tolong inget aku ya. Jangan pernah benci aku, dan jangan pernah lupain hal-hal bahagia yang udah kita laluin. Terima kasih kepada Pradana Alfian Nanta Ery Hertika, yang selalu berusaha menjadi lebih baik setiap harinya, yang selalu berusaha buat nggak ngecewain aku, dan yang selalu mencintai aku di kala aku merasa tidak dicintai.</p>
+            <p>Semoga kita tetap sama-sama ya, sayang? Terima kasih udah hadir, udah datang, udah singgah di hidupku, dan terima kasih karena menjadi salah satu pemeran penting dalam hidupku. Hidup lebih lama ya, sayang, biar kita bisa bahagia berdua dan habisin waktu kita berdua.</p>
+            <p>Semangat untuk segala hal yang membuatmu patah, tapi jangan pernah menyerah karena ada aku yang selalu support kamu di kala keadaanmu memburuk. Tetap jadi Pian yang aku kenal saat ini. Semoga cinta kamu ke aku nggak akan habis walaupun terkuras untuk aku.</p>
+            <p><strong>BABAIII BABYYY, SAMPAI JUMPA DI CODING SELANJUTNYAAA 🤍</strong></p>
+          </article>
+          <button id="to-menu-btn" class="btn full">Open Surprise 🎁</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="menu-screen" class="screen hidden">
+      <div class="container">
+        <div class="eyebrow">made with love, just for you</div>
+        <h1 class="script menu-title">There's still more</h1>
+        <p class="menu-subtitle">Waiting for you... 🩵<br>Open them one by one, okay?</p>
+        <div class="cards-grid">
+          <button class="card" data-modal="memories"><span class="card-icon">📸</span><span>Memories</span></button>
+          <button class="card" data-modal="flowers"><span class="card-icon">💐</span><span>Flowers</span></button>
+          <button class="card" data-modal="playlist"><span class="card-icon">🎵</span><span>Playlist</span></button>
+        </div>
+        <p class="footer-note">A tiny corner of my heart for you ♡</p>
+      </div>
+    </section>
+
+    <section id="detail-modal" class="modal hidden" aria-modal="true" role="dialog" aria-label="Detail kejutan">
+      <div class="modal-content">
+        <button id="close-modal" class="close-btn" aria-label="Tutup">×</button>
+
+        <div id="modal-memories" class="hidden" style="width:100%">
+          <h2 class="script modal-heading">Our Memories 📸</h2>
+          <div class="gallery">
+            <img id="gallery-img" src="foto1.jpg" alt="Kenangan pertama" draggable="false">
+          </div>
+          <p id="gallery-caption" class="gallery-caption">Chat awal kita di WhatsApp 💬</p>
+          <p id="photo-count" class="photo-count">1 / 4</p>
+          <div class="nav-controls">
+            <button id="prev-photo" class="btn secondary">◀ Back</button>
+            <button id="next-photo" class="btn">Next ▶</button>
+          </div>
+        </div>
+
+        <div id="modal-flowers" class="flower-panel hidden">
+          <h2 class="script modal-heading">Flowers For You 💐</h2>
+          <div class="flower-art"><img src="flowers.jpg" alt="Bunga untuk Pian"></div>
+          <p class="subtext">“Karena kamu berhak mendapatkan hal-hal paling indah di dunia ini.”</p>
+          <p class="subtext">Satu buket kecil untuk orang yang spesial buat aku. 🤍</p>
+        </div>
+
+        <div id="modal-playlist" class="playlist-panel hidden">
+          <h2 class="script modal-heading">Playlist For You 🎵</h2>
+          <p class="subtext">Lagu sedang diputar di latar belakang...</p>
+          <div class="playlist-item">
+            <span class="music-disc">🎧</span>
+            <div class="playlist-copy">
+              <strong>I Thought I Saw Your Face Today</strong>
+              <small>She & Him · lagu untuk Pian 🤍</small>
+            </div>
+            <button id="music-toggle" class="btn" aria-label="Jeda atau putar musik">Ⅱ</button>
+          </div>
+          <p id="music-status" class="footer-note">Musik siap diputar ♡</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    'use strict';
+
+    // Ubah PIN di sini. Formatnya 4 digit, misalnya "0809".
+    const CORRECT_PIN = '0809';
+
+    // Semua file foto dan musik harus berada di folder yang sama dengan index.html.
+    // Urutan kenangan: foto kamu, chat awal, reply foto, PAP pertama Fian.
+    const memoryData = [
+      { src: 'foto1.jpg', text: 'Foto aku buat kamu, biar ada aku juga di kumpulan kenangan kecil kita 🫶🏻🤍', alt: 'Foto aku' },
+      { src: 'foto2.jpg', text: 'Chat pertama kita di WhatsApp. Siapa sangka obrolan kecil ini jadi awal banyak cerita? 💬🤍', alt: 'Chat pertama kita' },
+      { src: 'foto3.jpg', text: 'Pas Fian selalu reply foto aku. Hal kecil, tapi selalu berhasil bikin aku senyum sendiri 🥹🩵', alt: 'Fian membalas foto aku' },
+      { src: 'foto4.jpg', text: 'PAP pertama Fian ke aku! Salah satu kenangan kecil yang pengin aku simpan 🤭🤍', alt: 'PAP pertama Fian' }
+    ];
+
+    const $ = (id) => document.getElementById(id);
+    let currentPin = '';
+    let currentPhotoIndex = 0;
+    let pinTimeout = null;
+
+    function updateDots() {
+      document.querySelectorAll('.pin-dot').forEach((dot, index) => {
+        dot.classList.toggle('filled', index < currentPin.length);
+      });
+    }
+
+    function showPinMessage(message, isError = false) {
+      const node = $('pin-message');
+      node.textContent = message;
+      node.style.color = isError ? '#ffb8c5' : '#d7e0f4';
+    }
+
+    function resetPin(message = 'Clue: tanggal & bulan ulang tahun kamu 🐱') {
+      currentPin = '';
+      updateDots();
+      showPinMessage(message);
+      if (pinTimeout) {
+        clearTimeout(pinTimeout);
+        pinTimeout = null;
+      }
+    }
+
+    function pressKey(num) {
+      if (currentPin.length >= 4 || pinTimeout) return;
+      currentPin += num;
+      updateDots();
+
+      if (currentPin.length === 4) {
+        pinTimeout = setTimeout(() => {
+          pinTimeout = null;
+          if (currentPin === CORRECT_PIN) {
+            $('pin-screen').classList.add('hidden');
+            $('envelope-screen').classList.remove('hidden');
+            showPinMessage('PIN benar');
+            // Audio mulai setelah interaksi pengguna dan mungkin tetap diblokir browser.
+            const audio = $('bg-music');
+            audio.play().then(() => updateMusicStatus()).catch(() => {
+              showPinMessage('PIN benar 🤍 Tekan tombol musik di Playlist jika lagu belum mulai.');
+            });
+          } else {
+            resetPin('🐱 PIN salah, coba lagi ya!');
+            $('pin-message').style.color = '#ffb8c5';
+          }
+        }, 220);
+      }
+    }
+
+    document.querySelectorAll('[data-key]').forEach((button) => {
+      button.addEventListener('click', () => pressKey(button.dataset.key));
+    });
+    document.querySelector('[data-action="clear"]').addEventListener('click', () => resetPin());
+    document.querySelector('[data-action="backspace"]').addEventListener('click', () => {
+      if (pinTimeout) return;
+      currentPin = currentPin.slice(0, -1);
+      updateDots();
+    });
+
+    function openEnvelope() {
+      $('envelope-closed').classList.add('hidden');
+      $('letter-open').classList.remove('hidden');
+    }
+    $('envelope-closed').addEventListener('click', openEnvelope);
+    $('envelope-closed').addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openEnvelope();
+      }
+    });
+    $('to-menu-btn').addEventListener('click', () => {
+      $('envelope-screen').classList.add('hidden');
+      $('menu-screen').classList.remove('hidden');
+    });
+
+    function updateGallery() {
+      const photo = memoryData[currentPhotoIndex];
+      const img = $('gallery-img');
+      img.src = photo.src;
+      img.alt = photo.alt;
+      $('gallery-caption').textContent = photo.text;
+      $('photo-count').textContent = `${currentPhotoIndex + 1} / ${memoryData.length}`;
+    }
+
+    function changePhoto(direction) {
+      currentPhotoIndex = (currentPhotoIndex + direction + memoryData.length) % memoryData.length;
+      updateGallery();
+    }
+    $('prev-photo').addEventListener('click', () => changePhoto(-1));
+    $('next-photo').addEventListener('click', () => changePhoto(1));
+
+    function openModal(type) {
+      $('detail-modal').classList.remove('hidden');
+      ['memories', 'flowers', 'playlist'].forEach((name) => {
+        $(`modal-${name}`).classList.toggle('hidden', name !== type);
+      });
+      if (type === 'memories') {
+        currentPhotoIndex = 0;
+        updateGallery();
+      }
+      if (type === 'playlist') updateMusicStatus();
+      $('close-modal').focus();
+    }
+    document.querySelectorAll('[data-modal]').forEach((button) => {
+      button.addEventListener('click', () => openModal(button.dataset.modal));
+    });
+    function closeModal() {
+      $('detail-modal').classList.add('hidden');
+    }
+    $('close-modal').addEventListener('click', closeModal);
+    $('detail-modal').addEventListener('click', (event) => {
+      if (event.target === $('detail-modal')) closeModal();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !$('detail-modal').classList.contains('hidden')) closeModal();
+      if ($('modal-memories') && !$('modal-memories').classList.contains('hidden')) {
+        if (event.key === 'ArrowLeft') changePhoto(-1);
+        if (event.key === 'ArrowRight') changePhoto(1);
+      }
+    });
+
+    // Geser foto ke kiri/kanan pada layar sentuh.
+    let touchStartX = null;
+    $('gallery-img').addEventListener('touchstart', (event) => {
+      touchStartX = event.changedTouches[0].clientX;
+    }, { passive: true });
+    $('gallery-img').addEventListener('touchend', (event) => {
+      if (touchStartX === null) return;
+      const delta = event.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(delta) > 45) changePhoto(delta < 0 ? 1 : -1);
+      touchStartX = null;
+    }, { passive: true });
+
+    function updateMusicStatus() {
+      const audio = $('bg-music');
+      const playing = !audio.paused;
+      $('music-toggle').textContent = playing ? 'Ⅱ' : '▶';
+      $('music-toggle').setAttribute('aria-label', playing ? 'Jeda musik' : 'Putar musik');
+      $('music-status').textContent = playing ? 'Lagu sedang diputar di latar belakang ♡' : 'Tekan ▶ untuk memutar musik ♡';
+    }
+    $('music-toggle').addEventListener('click', async () => {
+      const audio = $('bg-music');
+      if (audio.paused) {
+        try { await audio.play(); } catch (error) {
+          $('music-status').textContent = 'Musik belum bisa diputar. Pastikan file musik.mp3 ada dan formatnya benar.';
+        }
+      } else {
+        audio.pause();
+      }
+      updateMusicStatus();
+    });
+    $('bg-music').addEventListener('play', updateMusicStatus);
+    $('bg-music').addEventListener('pause', updateMusicStatus);
+    $('bg-music').addEventListener('error', () => {
+      $('music-status').textContent = 'File musik.mp3 tidak ditemukan atau tidak bisa dibaca.';
+    });
+
+    // Pesan jika salah satu file foto tidak ditemukan.
+    $('gallery-img').addEventListener('error', () => {
+      $('gallery-caption').textContent = `Foto "${memoryData[currentPhotoIndex].src}" belum ditemukan. Periksa nama file dan foldernya ya.`;
+    });
+  </script>
+</body>
+</html>
